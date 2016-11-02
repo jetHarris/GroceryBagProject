@@ -9,8 +9,14 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.grocery.grocerybag.MainActivity">
 
-    <TextView
-        android:layout_width="wrap_content"
+    <Button
+        android:text="View Items"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Hello World!" />
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="12dp"
+        android:id="@+id/buttonItems"
+        android:onClick="onClick" />
 </RelativeLayout>
+
