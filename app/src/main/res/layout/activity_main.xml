@@ -18,5 +18,15 @@
         android:layout_marginStart="12dp"
         android:id="@+id/buttonItems"
         android:onClick="onClick" />
+
+    <Button
+        android:text="View Lists"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/buttonItems"
+        android:layout_alignStart="@+id/buttonItems"
+        android:id="@+id/listBtn"
+        android:layout_alignParentEnd="true"
+        android:onClick="viewListsClicked" />
 </RelativeLayout>
 

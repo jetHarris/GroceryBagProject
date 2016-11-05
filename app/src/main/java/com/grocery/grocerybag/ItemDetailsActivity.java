@@ -5,6 +5,7 @@ import android.database.Cursor;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -29,6 +30,12 @@ public class ItemDetailsActivity extends AppCompatActivity {
     CheckBox pstC;
     CheckBox hstC;
     int itemID = -1;
+    boolean editingList = false;
+    int listID = 0;
+    Button saveBtn;
+    Button deleteBtn;
+    EditText quantityText;
+    int listItemId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,18 +70,33 @@ public class ItemDetailsActivity extends AppCompatActivity {
         gstC = (CheckBox)findViewById(R.id.GST);
         pstC = (CheckBox)findViewById(R.id.PST);
         hstC = (CheckBox)findViewById(R.id.HST);
+        saveBtn = (Button)findViewById(R.id.SaveButton);
+        deleteBtn = (Button)findViewById(R.id.buttonDelete);
+        quantityText = (EditText)findViewById(R.id.QuantityText);
+
 
         //get intent which would be from the outfits page
         //then use the outfit name to set the images appropriately
         if( getIntent().getExtras() != null)
         {
             String action = getIntent().getExtras().getString("action");
-            if (action.equals("add"))
+            if (action != null)
                 adding = true;
             else
             {
                 itemID = getIntent().getExtras().getInt("id");
+                if(getIntent().getExtras().getInt("listid") != 0) {
+                    listID = getIntent().getExtras().getInt("listid");
+                    editingList = true;
+                    listItemId = getIntent().getExtras().getInt("list_item_id");
+                }
             }
+        }
+
+        if(editingList){
+            saveBtn.setText("Update");
+            deleteBtn.setText("Delete from list");
+            quantityText.setVisibility(View.VISIBLE);
         }
 
 
@@ -97,6 +119,13 @@ public class ItemDetailsActivity extends AppCompatActivity {
                     pstC.setChecked( true);
                 if(c.getInt(7) == 1)
                     hstC.setChecked( true);
+
+                if(editingList)
+                {
+                    int temp = db.listItemQuantity(listItemId);
+                    quantityText.setText(""+temp);
+                }
+
             } else {
                 Toast.makeText(this, "Get failed on " + itemID, Toast.LENGTH_SHORT).show();
             }
@@ -134,7 +163,19 @@ public class ItemDetailsActivity extends AppCompatActivity {
         if(hstC.isChecked())
             hst = 1;
 
-        if(adding){
+        if(editingList){
+            int quantity = Integer.parseInt(quantityText.getText().toString());
+            db.open();
+            db.updateItem(itemID, name.getText().toString(),Float.parseFloat(price.getText().toString()),
+                    Float.parseFloat(sales_price.getText().toString()), use_sales,gst,pst,hst);
+            db.updateListItem(listItemId,quantity,itemID,listID,0);
+            Toast.makeText(this, "Item Updated", Toast.LENGTH_SHORT).show();
+            db.close();
+            Intent i = new Intent(this, ListDetailsActivity.class);
+            i.putExtra("id", listID);
+            startActivity(i);
+        }
+        else if(adding){
             db.open();
             db.insertItem(name.getText().toString(),Float.parseFloat(price.getText().toString()),
                     Float.parseFloat(sales_price.getText().toString()), use_sales,gst,pst,hst);
@@ -159,12 +200,28 @@ public class ItemDetailsActivity extends AppCompatActivity {
     }
 
     public void cancelClicked(View view) {
-        Intent i = new Intent(this, ItemCacheActivity.class);
-        startActivity(i);
+        if(editingList){
+            Intent i = new Intent(this, ListDetailsActivity.class);
+            i.putExtra("id", listID);
+            startActivity(i);
+        }
+        else {
+            Intent i = new Intent(this, ItemCacheActivity.class);
+            startActivity(i);
+        }
     }
 
     public void deleteClicked(View view) {
-        if(itemID != -1)
+        if(editingList){
+            db.open();
+            db.deleteListItem(listItemId);
+            Toast.makeText(this, "Item Removed from list", Toast.LENGTH_SHORT).show();
+            db.close();
+            Intent i = new Intent(this, ListDetailsActivity.class);
+            i.putExtra("id", listID);
+            startActivity(i);
+        }
+        else if(itemID != -1)
         {
             db.open();
             db.deleteItem(itemID);

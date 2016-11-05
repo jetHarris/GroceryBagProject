@@ -23,7 +23,10 @@
         <activity android:name=".ItemCacheActivity" />
         <activity
             android:name=".ItemDetailsActivity"
-            android:label="@string/title_activity_item_details"></activity>
+            android:label="@string/title_activity_item_details" />
+        <activity android:name=".ListActivity" />
+        <activity android:name=".ListCreationActivity" />
+        <activity android:name=".ListDetailsActivity"></activity>
     </application>
 
 </manifest>

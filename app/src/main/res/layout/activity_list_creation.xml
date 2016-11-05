@@ -1,39 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/activity_item_cache"
+    android:id="@+id/activity_list_creation"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:paddingBottom="@dimen/activity_vertical_margin"
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="com.grocery.grocerybag.ItemCacheActivity">
+    tools:context="com.grocery.grocerybag.ListCreationActivity">
 
-    <Button
-        android:text="Add New Item"
+    <EditText
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/addItemsBtn"
+        android:inputType="textPersonName"
+        android:ems="10"
         android:layout_alignParentTop="true"
         android:layout_alignParentStart="true"
-        android:onClick="addItemClick" />
+        android:id="@+id/nameText"
+        android:hint="List Name" />
 
-    <Button
-        android:text="Main Page"
+    <EditText
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/addItemsBtn"
-        android:layout_centerHorizontal="true"
-        android:id="@+id/button2"
-        android:onClick="backToMainClicked" />
+        android:inputType="textPersonName"
+        android:ems="10"
+        android:layout_below="@+id/nameText"
+        android:layout_alignParentStart="true"
+        android:id="@+id/budgetText"
+        android:hint="Budget" />
 
-    <ListView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/itemList"
+    <Button
+        android:text="Add"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_alignParentStart="true"
-        android:layout_below="@+id/addItemsBtn" />
-
+        android:id="@+id/addListBtn"
+        android:layout_alignParentEnd="true"
+        android:onClick="addListClicked" />
 </RelativeLayout>
