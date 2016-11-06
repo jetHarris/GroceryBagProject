@@ -4,6 +4,8 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -29,6 +31,14 @@ public class ItemCacheActivity extends AppCompatActivity implements AdapterView.
         setContentView(R.layout.activity_item_cache);
         db = new DBAdapter(this);
         lv = (ListView)findViewById(R.id.itemList);
+
+        // Toolbar back button
+        Toolbar my_toolbar = (Toolbar) findViewById(R.id.my_toolbar);
+        setSupportActionBar(my_toolbar);
+        getSupportActionBar().setTitle("Item List");
+        getSupportActionBar().setIcon(R.drawable.gb_logo_white);
+        getSupportActionBar().setHomeButtonEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true); // take us up to the parent activity
 
         //get the existing database file or from assets folder if doesn't exist
         try
@@ -100,5 +110,18 @@ public class ItemCacheActivity extends AppCompatActivity implements AdapterView.
         Intent i = new Intent(this, ItemDetailsActivity.class);
         i.putExtra("action", "add");
         startActivity(i);
+    }
+
+
+    // override menu method to make back button go up to main
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item)
+    {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                onBackPressed();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

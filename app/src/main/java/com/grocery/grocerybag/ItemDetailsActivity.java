@@ -4,6 +4,8 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.EditText;
@@ -36,6 +38,15 @@ public class ItemDetailsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_item_details);
 
         db = new DBAdapter(this);
+
+
+        // Toolbar back button
+        Toolbar my_toolbar = (Toolbar) findViewById(R.id.my_toolbar);
+        setSupportActionBar(my_toolbar);
+        getSupportActionBar().setTitle("Add New Item");
+        getSupportActionBar().setIcon(R.drawable.gb_logo_white);
+        getSupportActionBar().setHomeButtonEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         //get the existing database file or from assets folder if doesn't exist
         try
@@ -174,5 +185,18 @@ public class ItemDetailsActivity extends AppCompatActivity {
             startActivity(i);
         }
 
+    }
+
+
+    // override menu method to make back button go up to main
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item)
+    {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                onBackPressed();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }
