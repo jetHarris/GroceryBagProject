@@ -101,6 +101,7 @@ public class ItemCacheActivity extends AppCompatActivity implements AdapterView.
         if(addingItemsToList){
             adapter = new ArrayAdapter<String>(this,
                     android.R.layout.simple_list_item_checked, itemNames);
+            lv.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
         }
 
         lv.setAdapter(adapter);
@@ -111,7 +112,6 @@ public class ItemCacheActivity extends AppCompatActivity implements AdapterView.
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         if(addingItemsToList){
             CheckedTextView cv = (CheckedTextView)view;
-            cv.setChecked(!cv.isChecked());
             if(cv.isChecked()) {
                 checkedItemIds.add(itemIds.get(position));
             }
