@@ -80,7 +80,7 @@ public class ItemDetailsActivity extends AppCompatActivity {
         if( getIntent().getExtras() != null)
         {
             String action = getIntent().getExtras().getString("action");
-            if (action != null)
+            if (action != null && action.equals("add"))
                 adding = true;
             else
             {
