@@ -11,10 +11,10 @@ import android.util.Log;
 import java.util.ArrayList;
 
 /**
- * Created by lwong on 9/28/2015.
+ * Created by GroceryBag Team on 10-28-2016.
  */
 
-//modified by Luke Harris for use in the JocelynDressUp app
+//modified by Luke Harris for use in the GroceryBag app
 public class DBAdapter {
 
 
@@ -130,7 +130,7 @@ public class DBAdapter {
         DBHelper.close();
     }
 
-    //inserts an outfit into the database
+    //inserts an item into the database
     //INSERT INTO Items (item_name, price, sale_price, use_sale_price, GST, PST, HST)
     //VALUES ('Milk', 4.29, 3.49, 0, 0, 0, 0);
     public long insertItem(String name, float price, float sale_price, int use_sale_price, int GST, int PST, int HST)
@@ -181,26 +181,26 @@ public class DBAdapter {
         }
     }
 
-    //deletes an outfit
+    //deletes an item
     public boolean deleteItem(long rowId)
     {
         return db.delete(ITEM_TABLE, KEY_ROWID + "=" + rowId, null) > 0;
     }
 
-    //deletes an outfit
+    //deletes an List Item
     public boolean deleteListItem(long rowID)
     {
         return db.delete(LIST_ITEMS_TABLE, KEY_ROWID + "=" + rowID, null) > 0;
     }
 
-    //gets all outfits from the database
+    //gets all items from the database
     public Cursor getAllItems()
     {
         return db.query(ITEM_TABLE, new String[] {KEY_ROWID, KEY_ITEM_NAME,
                 KEY_PRICE, KEY_SALE_PRICE,KEY_USE_SALE_PRICE,KEY_GST, KEY_PST,KEY_HST}, null, null, null, null, null);
     }
 
-    //gets all outfits from the database
+    //gets all lists from the database
     public Cursor getAllLists()
     {
         return db.query(LIST_TABLE, new String[] {KEY_ROWID, "list_name",
@@ -208,13 +208,13 @@ public class DBAdapter {
     }
 
 
-    //gets all outfits from the database
+    //gets all list items from the database
     public ArrayList<Integer> getAllItemsForList(int id)
     {
 
         Cursor c;
         ArrayList<Integer> itemIds = new ArrayList<Integer>();
-        //get all the outfits and put then into the arrayList
+        //get all the item and put then into the arrayList
         c = db.query(LIST_ITEMS_TABLE, new String[] {KEY_ROWID, "quantity",
                 "item_id", "list_id","checked"},"list_id" + "=" + id, null, null, null, null, null);
         if(c.moveToFirst())
@@ -223,17 +223,18 @@ public class DBAdapter {
                 itemIds.add(c.getInt(2));
             }while(c.moveToNext());
         }
+        c.close();
         return itemIds;
 
     }
 
-    //gets all outfits from the database
+    //gets all list items from the database
     public ArrayList<Boolean> getAllChecksForList(int id)
     {
 
         Cursor c;
         ArrayList<Boolean> itemChecks= new ArrayList<Boolean>();
-        //get all the outfits and put then into the arrayList
+        //get all the checked statuses and put then into the arrayList
         c = db.query(LIST_ITEMS_TABLE, new String[] {KEY_ROWID, "quantity",
                 "item_id", "list_id","checked"},"list_id" + "=" + id, null, null, null, null, null);
         if(c.moveToFirst())
@@ -247,13 +248,13 @@ public class DBAdapter {
 
     }
 
-    //gets all outfits from the database
+    //gets all items from the database
     public ArrayList<Integer> getAllListItemIDsForList(int id)
     {
 
         Cursor c;
         ArrayList<Integer> itemIds = new ArrayList<Integer>();
-        //get all the outfits and put then into the arrayList
+        //get all the items and put then into the arrayList
         c = db.query(LIST_ITEMS_TABLE, new String[] {KEY_ROWID, "quantity",
                 "item_id", "list_id","checked"},"list_id" + "=" + id, null, null, null, null, null);
         if(c.moveToFirst())
@@ -262,11 +263,12 @@ public class DBAdapter {
                 itemIds.add(c.getInt(0));
             }while(c.moveToNext());
         }
+        c.close();
         return itemIds;
 
     }
 
-    //gets an outfit by id from the database
+    //gets an item name by id from the database
     public String getItemName(long rowId) throws SQLException
     {
         Cursor mCursor =
@@ -275,7 +277,9 @@ public class DBAdapter {
                         null, null, null, null);
         if (mCursor != null) {
             mCursor.moveToFirst();
-            return mCursor.getString(1);
+            String name = mCursor.getString(1);
+            mCursor.close();
+            return name;
         }
         return "";
     }
@@ -288,12 +292,14 @@ public class DBAdapter {
                         null, null, null, null);
         if (mCursor != null) {
             mCursor.moveToFirst();
-            return mCursor.getString(1);
+            String name = mCursor.getString(1);
+            mCursor.close();
+            return name;
         }
         return "";
     }
 
-    //gets an outfit by id from the database
+    //gets an item by id from the database
     public Cursor getItem(long rowId) throws SQLException
     {
         Cursor mCursor =
@@ -303,10 +309,11 @@ public class DBAdapter {
         if (mCursor != null) {
             mCursor.moveToFirst();
         }
+        mCursor.close();
         return mCursor;
     }
 
-    //gets an outfit by id from the database
+    //gets an list item quantity by id from the database
     public int listItemQuantity(int list_item_id) throws SQLException
     {
         //Cursor mCursor = db.rawQuery("select * from "+LIST_ITEMS_TABLE+" where item_id= "+item_id+" and list_id = " + list_id);
@@ -319,11 +326,12 @@ public class DBAdapter {
             return mCursor.getInt(1);
         }
 
+        mCursor.close();
         return 0;
     }
 
 
-    //---updates an outfit---
+    //---updates an Item---
     public boolean updateItem(long rowId, String name, float price, float sale_price, int use_sale_price, int GST, int PST, int HST)
     {
         ContentValues args = new ContentValues();
@@ -351,7 +359,7 @@ public class DBAdapter {
     {
         ContentValues args = new ContentValues();
         args.put("checked", checked);
-        int rowsUpdated = db.update(LIST_ITEMS_TABLE, args, KEY_ROWID + "=" + rowID, null);
+        db.update(LIST_ITEMS_TABLE, args, KEY_ROWID + "=" + rowID, null);
     }
 
 }
