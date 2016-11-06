@@ -309,7 +309,7 @@ public class DBAdapter {
         if (mCursor != null) {
             mCursor.moveToFirst();
         }
-        mCursor.close();
+
         return mCursor;
     }
 
@@ -323,10 +323,11 @@ public class DBAdapter {
                         null, null, null, null);
         if (mCursor != null) {
             mCursor.moveToFirst();
-            return mCursor.getInt(1);
+            int quantity =mCursor.getInt(1);
+            mCursor.close();
+            return quantity;
         }
 
-        mCursor.close();
         return 0;
     }
 

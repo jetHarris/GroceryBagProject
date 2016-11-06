@@ -129,6 +129,7 @@ public class ItemDetailsActivity extends AppCompatActivity {
             } else {
                 Toast.makeText(this, "Get failed on " + itemID, Toast.LENGTH_SHORT).show();
             }
+            c.close();
             db.close();
         }
 
