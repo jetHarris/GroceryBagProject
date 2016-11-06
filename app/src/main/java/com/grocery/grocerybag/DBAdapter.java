@@ -239,9 +239,10 @@ public class DBAdapter {
         if(c.moveToFirst())
         {
             do {
-                itemChecks.add(c.getInt(3) != 0);
+                itemChecks.add(c.getInt(4) != 0);
             }while(c.moveToNext());
         }
+        c.close();
         return itemChecks;
 
     }
@@ -350,7 +351,7 @@ public class DBAdapter {
     {
         ContentValues args = new ContentValues();
         args.put("checked", checked);
-        db.update(LIST_ITEMS_TABLE, args, KEY_ROWID + "=" + rowID, null);
+        int rowsUpdated = db.update(LIST_ITEMS_TABLE, args, KEY_ROWID + "=" + rowID, null);
     }
 
 }

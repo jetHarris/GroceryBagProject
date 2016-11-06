@@ -1,5 +1,6 @@
 package com.grocery.grocerybag;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
 import android.support.v7.app.AppCompatActivity;
@@ -24,6 +25,8 @@ public class ListDetailsActivity extends AppCompatActivity implements AdapterVie
     int listID;
     TextView label;
     ArrayList<Integer> listItemIds= new ArrayList<Integer>();
+
+    private Activity lda;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -37,7 +40,7 @@ public class ListDetailsActivity extends AppCompatActivity implements AdapterVie
             listID= getIntent().getExtras().getInt("id");
         }
 
-        Cursor c;
+        lda = this;
         ArrayList<String> itemNames = new ArrayList<String>();
         //get all the outfits and put then into the arrayList
         db.open();
@@ -57,42 +60,42 @@ public class ListDetailsActivity extends AppCompatActivity implements AdapterVie
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
                 android.R.layout.simple_list_item_checked, itemNames);
         lv.setAdapter(adapter);
+        lv.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
         lv.setOnItemClickListener(this);
         lv.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> arg0, View arg1,
-                                           int pos, long id) {
+                                           int position, long id) {
 
-                CheckedTextView cv = (CheckedTextView)arg1;
-                cv.setChecked(!cv.isChecked());
-                checks.set(pos,!checks.get(pos));
-                db.open();
-                if(checks.get(pos)){
-                    db.updateListItemCheck(listItemIds.get(pos),1);
-                }
-                else{
-                    db.updateListItemCheck(listItemIds.get(pos),0);
-                }
-                db.close();
+                Intent i = new Intent(lda, ItemDetailsActivity.class);
+                i.putExtra("listid", listID);
+                i.putExtra("list_item_id",listItemIds.get(position));
+                int thisID = itemIds.get(position);
+                i.putExtra("id", thisID);
+                startActivity(i);
+
                 return true;
             }
         });
 
         for(int i = 0; i < checks.size();++i)
         {
-            lv.setItemChecked(i,false);
+            lv.setItemChecked(i,checks.get(i));
         }
     }
 
 
     @Override
-    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        Intent i = new Intent(this, ItemDetailsActivity.class);
-        i.putExtra("listid", listID);
-        i.putExtra("list_item_id",listItemIds.get(position));
-        int thisID = itemIds.get(position);
-        i.putExtra("id", thisID);
-        startActivity(i);
+    public void onItemClick(AdapterView<?> parent, View view, int pos, long id) {
+        checks.set(pos,!checks.get(pos));
+        db.open();
+        if(checks.get(pos)){
+            db.updateListItemCheck(listItemIds.get(pos),1);
+        }
+        else{
+            db.updateListItemCheck(listItemIds.get(pos),0);
+        }
+        db.close();
     }
 
     public void addItemClicked(View view) {
