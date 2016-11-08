@@ -102,6 +102,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     public void onLoginSuccess() {
+        MainActivity.loggedIn = true;
         _loginButton.setEnabled(true);
         finish();
     }

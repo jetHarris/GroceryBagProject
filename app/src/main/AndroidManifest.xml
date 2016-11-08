@@ -21,6 +21,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <activity android:name=".ItemCacheActivity" />
         <activity
             android:name=".ItemDetailsActivity"
@@ -32,6 +33,9 @@
             android:name=".SignupActivity"
             android:label="@string/title_activity_signup"
             android:theme="@style/AppTheme"></activity>
+        <activity android:name=".ListActivity" />
+        <activity android:name=".ListCreationActivity" />
+        <activity android:name=".ListDetailsActivity"/>
     </application>
 
 </manifest>

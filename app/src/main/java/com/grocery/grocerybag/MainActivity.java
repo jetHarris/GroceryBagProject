@@ -6,19 +6,19 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 
-// alexis testing
+
 public class MainActivity extends AppCompatActivity {
+    public static boolean loggedIn = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        //comment added by Jon
-        //comment added by Luke
-
-        Intent intent = new Intent(this, LoginActivity.class);
-        startActivity(intent);
+        if (!loggedIn) {
+            Intent intent = new Intent(this, LoginActivity.class);
+            startActivity(intent);
+        }
 
         // set toolbar
         Toolbar my_toolbar = (Toolbar) findViewById(R.id.my_toolbar);
