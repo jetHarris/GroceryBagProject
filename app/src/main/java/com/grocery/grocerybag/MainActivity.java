@@ -31,5 +31,11 @@ public class MainActivity extends AppCompatActivity {
     public void onClick(View view) {
         Intent i = new Intent(this, ItemCacheActivity.class);
         startActivity(i);
+
+    }
+
+    public void viewListsClicked(View view) {
+        Intent i2 = new Intent(this, ListActivity.class);
+        startActivity(i2);
     }
 }

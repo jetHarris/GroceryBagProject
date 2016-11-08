@@ -9,7 +9,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.CheckedTextView;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -24,6 +27,10 @@ public class ItemCacheActivity extends AppCompatActivity implements AdapterView.
     private DBAdapter db;
     private ListView lv;
     ArrayList<Integer> itemIds= new ArrayList<Integer>();
+    ArrayList<Integer> checkedItemIds= new ArrayList<Integer>();
+    boolean addingItemsToList = false;
+    int listId;
+    Button addBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,6 +38,7 @@ public class ItemCacheActivity extends AppCompatActivity implements AdapterView.
         setContentView(R.layout.activity_item_cache);
         db = new DBAdapter(this);
         lv = (ListView)findViewById(R.id.itemList);
+        addBtn = (Button)findViewById(R.id.addItemsBtn);
 
         // Toolbar back button
         Toolbar my_toolbar = (Toolbar) findViewById(R.id.my_toolbar);
@@ -61,16 +69,22 @@ public class ItemCacheActivity extends AppCompatActivity implements AdapterView.
 
         lv = (ListView)findViewById(R.id.itemList);
 
+        if (getIntent().getExtras() != null) {
+            listId = getIntent().getExtras().getInt("listid");
+            if (listId != 0) {
+                addingItemsToList = true;
+                addBtn.setText("Add Items to List");
+            }
+        }
+
         Cursor c;
         ArrayList<String> itemNames = new ArrayList<String>();
-        int totalOutfits = 0;
         //get all the outfits and put then into the arrayList
         db.open();
         c = db.getAllItems();
         if(c.moveToFirst())
         {
             do {
-                totalOutfits++;
                 itemNames.add(c.getString(1));
                 itemIds.add(c.getInt(0));
                 //DisplayContact(c);
@@ -78,21 +92,51 @@ public class ItemCacheActivity extends AppCompatActivity implements AdapterView.
         }
         db.close();
 
+        if(addingItemsToList){
+            db.open();
+            ArrayList<Integer> tempItems = db.getAllItemsForList(listId);
+
+            for(int i = 0; i < tempItems.size();++i){
+                String itemName = db.getItemName(tempItems.get(i));
+                itemNames.remove(itemName);
+                itemIds.remove(tempItems.get(i));
+            }
+            db.close();
+
+        }
+
         //use the array list to fill out the list view
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
                 android.R.layout.simple_list_item_1, itemNames);
+        if(addingItemsToList){
+            adapter = new ArrayAdapter<String>(this,
+                    android.R.layout.simple_list_item_checked, itemNames);
+            lv.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
+        }
+
         lv.setAdapter(adapter);
         lv.setOnItemClickListener(this);
     }
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        String selectedFromList = (String)(lv.getItemAtPosition(position));
-        Intent i = new Intent(this, ItemDetailsActivity.class);
-        i.putExtra("action", "edit");
-        int thisID = itemIds.get(position);
-        i.putExtra("id", thisID);
-        startActivity(i);
+        if(addingItemsToList){
+            CheckedTextView cv = (CheckedTextView)view;
+            if(cv.isChecked()) {
+                checkedItemIds.add(itemIds.get(position));
+            }
+            else
+                checkedItemIds.remove(itemIds.get(position));
+
+        }
+        else {
+            String selectedFromList = (String) (lv.getItemAtPosition(position));
+            Intent i = new Intent(this, ItemDetailsActivity.class);
+            i.putExtra("action", "edit");
+            int thisID = itemIds.get(position);
+            i.putExtra("id", thisID);
+            startActivity(i);
+        }
     }
 
     public void CopyDB(InputStream inputStream, OutputStream outputStream) throws IOException {
@@ -107,8 +151,26 @@ public class ItemCacheActivity extends AppCompatActivity implements AdapterView.
     }
 
     public void addItemClick(View view) {
-        Intent i = new Intent(this, ItemDetailsActivity.class);
-        i.putExtra("action", "add");
+        if(addingItemsToList)
+        {
+            //add all the items to the list
+            db.open();
+            db.insertItemsIntoList(checkedItemIds, listId);
+            db.close();
+
+            Intent i = new Intent(this, ListDetailsActivity.class);
+            i.putExtra("id", listId);
+            startActivity(i);
+        }
+        else {
+            Intent i = new Intent(this, ItemDetailsActivity.class);
+            i.putExtra("action", "add");
+            startActivity(i);
+        }
+    }
+
+    public void backToMainClicked(View view) {
+        Intent i = new Intent(this, MainActivity.class);
         startActivity(i);
     }
 

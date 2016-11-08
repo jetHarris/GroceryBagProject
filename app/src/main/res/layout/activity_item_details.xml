@@ -26,12 +26,12 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:inputType="textPersonName"
-        android:text="Name"
         android:ems="10"
         android:layout_alignParentTop="true"
         android:layout_toEndOf="@+id/textView"
         android:layout_marginStart="16dp"
-        android:id="@+id/NameText" />
+        android:id="@+id/NameText"
+        android:hint="Name" />
 
     <TextView
         android:text="Price"
@@ -46,21 +46,21 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:inputType="textPersonName"
-        android:text="10.0"
         android:ems="10"
         android:layout_below="@+id/NameText"
         android:layout_alignStart="@+id/NameText"
-        android:id="@+id/PriceText" />
+        android:id="@+id/PriceText"
+        android:hint="Price" />
 
     <EditText
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:inputType="textPersonName"
-        android:text="10.0"
         android:ems="10"
         android:layout_below="@+id/PriceText"
         android:layout_alignStart="@+id/PriceText"
-        android:id="@+id/SalesPriceText" />
+        android:id="@+id/SalesPriceText"
+        android:hint="Sales Price" />
 
     <CheckBox
         android:text="GST"
@@ -99,14 +99,13 @@
         android:text="Add New"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/HST"
         android:layout_alignParentStart="true"
-        android:layout_marginTop="36dp"
         android:textColor="#333333"
         android:textSize="13dp"
         android:background="@drawable/button"
         android:id="@+id/SaveButton"
-        android:onClick="saveClicked"/>
+        android:onClick="saveClicked"
+        android:layout_below="@+id/QuantityText" />
 
 
     <Button
@@ -134,6 +133,17 @@
         android:layout_marginStart="14dp"
         android:id="@+id/buttonDelete"
         android:onClick="deleteClicked"/>
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="textPersonName"
+        android:ems="10"
+        android:layout_below="@+id/HST"
+        android:layout_alignEnd="@+id/SalesPriceText"
+        android:id="@+id/QuantityText"
+        android:hint="Quantity"
+        android:visibility="invisible" />
 
     </RelativeLayout>
 </FrameLayout>
