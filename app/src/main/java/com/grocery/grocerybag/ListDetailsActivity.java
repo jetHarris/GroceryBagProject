@@ -15,6 +15,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class ListDetailsActivity extends AppCompatActivity implements AdapterView.OnItemClickListener {
 
@@ -25,6 +27,7 @@ public class ListDetailsActivity extends AppCompatActivity implements AdapterVie
     int listID;
     TextView label;
     ArrayList<Integer> listItemIds= new ArrayList<Integer>();
+	Timer t;
 
     private Activity lda;
     @Override
@@ -82,20 +85,23 @@ public class ListDetailsActivity extends AppCompatActivity implements AdapterVie
         {
             lv.setItemChecked(i,checks.get(i));
         }
+
+		t = new Timer();
+		t.scheduleAtFixedRate(new ServerUpdater(this), 1, 10000);
     }
 
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int pos, long id) {
-        checks.set(pos,!checks.get(pos));
-        db.open();
-        if(checks.get(pos)){
-            db.updateListItemCheck(listItemIds.get(pos),1);
-        }
-        else{
-            db.updateListItemCheck(listItemIds.get(pos),0);
-        }
-        db.close();
+//        checks.set(pos,!checks.get(pos));
+//        db.open();
+//        if(checks.get(pos)){
+//            db.updateListItemCheck(listItemIds.get(pos),1);
+//        }
+//        else{
+//            db.updateListItemCheck(listItemIds.get(pos),0);
+//        }
+//        db.close();
     }
 
     public void addItemClicked(View view) {
@@ -103,4 +109,58 @@ public class ListDetailsActivity extends AppCompatActivity implements AdapterVie
         i.putExtra("listid", listID);
         startActivity(i);
     }
+
+	private ArrayList<ListItemItems> getItemsForListId(int listId, ArrayList<ListItemItems> list){
+		ArrayList<ListItemItems> items = new ArrayList<>();
+		for (ListItemItems lii : list)
+			if (lii.getListId() == listId)
+				items.add(lii);
+
+		return items;
+	}
+
+    public void setList(ArrayList<ListItemItems> list, ArrayList<ItemBankItem> bankList){
+		ArrayList<String> itemNames = new ArrayList<>();
+		ArrayList<Boolean> checkedState = new ArrayList<>();
+
+		for (ListItemItems lii: getItemsForListId(1, list)){
+			for (ItemBankItem ibi: bankList)
+			{
+				if (ibi.getId() == lii.getItemId()) {
+					itemNames.add(ibi.getName());
+					checkedState.add(lii.getChecked());
+					break;
+				}
+			}
+		}
+
+		//use the array list to fill out the list view
+		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
+				android.R.layout.simple_list_item_checked, itemNames);
+		lv.setAdapter(adapter);
+
+		for(int i = 0; i < itemNames.size();++i)
+		{
+			lv.setItemChecked(i,checkedState.get(i) );
+		}
+		checks = checkedState;
+	}
+
+	@Override
+	protected void onPause() {
+		super.onPause();
+		t.cancel();
+	}
+
+	private class ServerUpdater extends TimerTask {
+		ListDetailsActivity lda;
+		public ServerUpdater(ListDetailsActivity lda)
+		{
+			this.lda = lda;
+		}
+		@Override
+		public void run() {
+			new ServerSync(lda).execute();
+		}
+	}
 }
